@@ -7,7 +7,7 @@ namespace IS349Pro.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private Dbcontext _context;
+    private readonly Dbcontext _context;
     public HomeController(ILogger<HomeController> logger)
     {
         _logger = logger;
@@ -26,6 +26,7 @@ public class HomeController : Controller
                 PositionName = position[1].ToString()
             });
         }
+        position.Close();
         return View(pos);
     }
 

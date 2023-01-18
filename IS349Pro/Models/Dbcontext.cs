@@ -5,10 +5,11 @@ namespace IS349Pro.Models;
 
 public class Dbcontext
 {
-	private SqlConnection _connection;
+	private readonly SqlConnection _connection;
 	public Dbcontext()
 	{
-		string conString = @"Server=localhost;Database=IS349HR23;User Id=sa;Password=Strong.Pwd-123;TrustServerCertificate=true;";
+		string conString = @"Server=localhost;Database=IS349HR23;
+		User Id=sa;Password=Strong.Pwd-123;TrustServerCertificate=true;";
 		_connection = new SqlConnection(conString);
 	}
 	public SqlDataReader ReadData(string sql)
