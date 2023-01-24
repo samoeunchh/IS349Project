@@ -20,5 +20,22 @@ public class Dbcontext
 			return cmd.ExecuteReader();
 		}
 	}
+	public bool ExecuteQuery(string sql)
+	{
+        using (SqlCommand cmd = new SqlCommand(sql, _connection))
+        {
+			try
+			{
+                _connection.Open();
+                cmd.ExecuteNonQuery();
+                return true;
+			}
+			catch
+			{
+				return false;
+			}
+           
+        }
+    }
 }
 

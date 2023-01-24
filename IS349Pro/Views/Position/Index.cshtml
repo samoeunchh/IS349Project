@@ -1,0 +1,34 @@
+﻿@model IEnumerable<IS349Pro.Models.Position>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <a href="/Position/Create" class="btn btn-primary">Add Position</a>
+        </div>
+    </div>
+   <div class="row">
+       <div class="col-12">
+           <table class="table table-bordered">
+               <thead>
+                   <tr>
+                       <th>Position Name</th>
+                       <th>Action</th>
+                   </tr>
+               </thead>
+               <tbody>
+                   @foreach(var item in Model)
+{
+                           <tr>
+                               <td>@item.PositionName</td>
+                               <td><button>Del</button></td>
+                           </tr>
+}
+               </tbody>
+           </table>
+       </div>
+   </div>
+</div>
+

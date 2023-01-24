@@ -1,0 +1,22 @@
+﻿@model IS349Pro.Models.Position
+@{
+    ViewData["Title"] = "Position Page";
+}
+
+<div class="container">
+   <div class="row">
+       <div class="col-4">
+           <form method="post" action="Create">
+               @Html.AntiForgeryToken()
+               <div class="form-group">
+                   <label class="form-label">Position Name</label>
+                   <input class="form-control"
+                          id="PositionName" name="PositionName" />
+               </div>
+               <input type="submit" value="Create"
+                      class="btn btn-primary" />
+           </form>
+       </div>
+   </div>
+</div>
+
