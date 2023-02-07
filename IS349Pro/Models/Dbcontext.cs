@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using Microsoft.Data.SqlClient;
 namespace IS349Pro.Models;
 
@@ -16,8 +17,23 @@ public class Dbcontext
 	{
 		using(SqlCommand cmd=new SqlCommand(sql, _connection))
 		{
-			_connection.Open();
-			return cmd.ExecuteReader();
+            if (_connection.State == ConnectionState.Closed)
+            {
+                _connection.Open();
+            }
+            return cmd.ExecuteReader();
+		}
+	}
+	public int IsExist(string sql)
+	{
+		using(SqlCommand cmd=new SqlCommand(sql, _connection))
+		{
+            if (_connection.State == ConnectionState.Closed)
+            {
+                _connection.Open();
+            }
+            var result = cmd.ExecuteScalar();
+            return int.Parse(result.ToString());
 		}
 	}
 	public bool ExecuteQuery(string sql)
@@ -26,7 +42,10 @@ public class Dbcontext
         {
 			try
 			{
-                _connection.Open();
+				if (_connection.State == ConnectionState.Closed)
+				{
+					_connection.Open();
+				}
                 cmd.ExecuteNonQuery();
                 return true;
 			}

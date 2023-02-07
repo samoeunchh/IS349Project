@@ -51,12 +51,24 @@ namespace IS349Pro.Controllers
         {
             try
             {
-                var sql = "INSERT INTO Position(PositionName) VALUES('"+ position.PositionName+"')";
+                if (string.IsNullOrEmpty(position.PositionName))
+                {
+                    ViewData["Exist"] = "Position name field is required";
+                    return View(position);
+                }
+                //check if record exist
+                var s = "SELECT COUNT(*) FROM Position WHERE PositionName=N'"+ position.PositionName+"'";
+                if (_context.IsExist(s) >=1)
+                {
+                    ViewData["Exist"] = "This record was exist";
+                    return View(position);
+                }
+                var sql = "INSERT INTO Position(PositionName) VALUES(N'"+ position.PositionName+"')";
                 if (_context.ExecuteQuery(sql))
                 {
                     return RedirectToAction(nameof(Index));
                 }
-                return View();
+                return View(position);
             }
             catch
             {
@@ -87,22 +99,19 @@ namespace IS349Pro.Controllers
             }
         }
 
-        // GET: Position/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
         // POST: Position/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        //[ValidateAntiForgeryToken]
+        public IActionResult Delete(int id)
         {
             try
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
+                var sql = "DELETE FROM Position WHERE PositionId=" + id;
+                if (_context.ExecuteQuery(sql))
+                {
+                    return Ok("Success");
+                }
+                return Ok("failed");
             }
             catch
             {

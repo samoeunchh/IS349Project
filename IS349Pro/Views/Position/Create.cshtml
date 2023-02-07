@@ -6,12 +6,13 @@
 <div class="container">
    <div class="row">
        <div class="col-4">
+           <span class="text-danger">@ViewData["Exist"]</span>
            <form method="post" action="Create">
                @Html.AntiForgeryToken()
                <div class="form-group">
                    <label class="form-label">Position Name</label>
                    <input class="form-control"
-                          id="PositionName" name="PositionName" />
+                          asp-for="PositionName" />
                </div>
                <input type="submit" value="Create"
                       class="btn btn-primary" />
