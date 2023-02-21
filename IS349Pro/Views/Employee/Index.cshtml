@@ -1,5 +1,4 @@
-﻿@model IEnumerable<IS349Pro.Models.Employee>
-@{
+﻿@{
     ViewData["Title"] = "Employee List";
 }
 
@@ -19,7 +18,7 @@
     <br/>
    <div class="row">
        <div class="col-12">
-           <table class="table table-bordered" id="posList">
+           <table class="table table-bordered" id="empList">
                <thead>
                    <tr>
                        <th>Employee Name</th>
@@ -39,26 +38,35 @@
 </div>
 @section Scripts{
     <script>
+        $(document).ready(function () {
+            GetEmployee("");
+        });
+        function GetEmployee(q) {
+            $("#empList > tbody > tr").empty();
+            $.ajax({
+                method: "GET",
+                url: "/Employee/GetEmployee/?q=",
+                success: function (data) {
+                    $.each(data, function (i, v) {
+                        var row = "<tr><td>" + v.employeeName;
+                        row += "</td><td>" + v.gender;
+                        row += "</td><td>" + v.address;
+                        row += "</td><td>" + v.salary;
+                        row += "</td><td>" + v.positionName;
+                        row += "</td><td>" + v.departmentName;
+                        row += "</td></tr>";
+                        $("#empList").append(row);
+                    });
+                }, error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
         $("#btnSearch").click(function () {
             var search = $("#Search").val();
             $("#posList > tbody > tr").remove();
             if (search) {
-                $.ajax({
-                    method: "GET",
-                    url: "/Position/Search/?q=" + search,
-                    success: function (data) {
-                        $.each(data, function (i, v) {
-                            console.log(v);
-                            var row = "<tr><td>" + v.positionName;
-                            row += "</td><td><button onclick=Delete(" + v.positionId;
-                            row += "); class='btn btn-danger'>Del</button>";
-                            row += "</td></tr>";
-                            $("#posList").append(row);
-                        });
-                    }, error: function (error) {
-                        console.log(error);
-                    }
-                });
+               
             } else {
                 window.location.reload();
             }
