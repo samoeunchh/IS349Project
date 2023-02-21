@@ -1,13 +1,13 @@
-﻿@model IEnumerable<IS349Pro.Models.Position>
+﻿@model IEnumerable<IS349Pro.Models.Employee>
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Employee List";
 }
 
 <div class="container">
     <div class="row">
         <div class="col-4">
             <a href="/Position/Create" class="btn btn-primary">
-            Add Position</a>
+            Add Employee</a>
         </div>
         <div class="col-6">
             <input class="form-control" id="Search" name="Search" />
@@ -22,20 +22,16 @@
            <table class="table table-bordered" id="posList">
                <thead>
                    <tr>
-                       <th>Position Name</th>
-                       <th>Action</th>
+                       <th>Employee Name</th>
+                       <th>Gender</th>
+                       <th>Address</th>
+                       <th>Salary</th>
+                       <th>Position</th>
+                       <th>Department</th>
                    </tr>
                </thead>
                <tbody>
-                   @foreach(var item in Model)
-{
-                           <tr>
-                               <td>@item.PositionName</td>
-                               <td><button class="btn btn-danger"
-                                           onclick=Delete(@item.PositionId);>Del</button>
-                               </td>
-                           </tr>
-}
+                  
                </tbody>
            </table>
        </div>

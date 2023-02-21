@@ -31,6 +31,21 @@ namespace IS349Pro.Controllers
             position.Close();
             return View(pos);
         }
+        public JsonResult Search(string q)
+        {
+            var position = _context.ReadData("SELECT * FROM Position WHERE PositionName Like N'%"+ q +"%'");
+            var pos = new List<Position>();
+            while (position.Read())
+            {
+                pos.Add(new Position
+                {
+                    PositionId = int.Parse(position[0].ToString()),
+                    PositionName = position[1].ToString()
+                });
+            }
+            position.Close();
+            return Json(pos);
+        }
 
         // GET: Position/Details/5
         public ActionResult Details(int id)
