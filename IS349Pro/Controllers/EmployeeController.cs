@@ -26,6 +26,10 @@ public class EmployeeController : Controller
             "\np.PositionName,d.DepartmentName" +
             "\nFROM Employee e INNER JOIN [Position] p ON e.PositionId = p.PositionId" +
             "\nINNER JOIN Department d ON e.DepartmentId=d.DepartmentId";
+        if (!string.IsNullOrEmpty(q))
+        {
+            sql += " WHERE e.EmployeeName Like N'%" + q + "%' OR p.PositionName LIKE N'%"+ q +"%'";
+        }
         var empList = new List<EmpolyeeDTO>();
         var result = _context.ReadData(sql);
         while (result.Read())

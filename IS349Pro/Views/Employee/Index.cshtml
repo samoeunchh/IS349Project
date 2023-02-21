@@ -45,7 +45,7 @@
             $("#empList > tbody > tr").empty();
             $.ajax({
                 method: "GET",
-                url: "/Employee/GetEmployee/?q=",
+                url: "/Employee/GetEmployee/?q="+ q,
                 success: function (data) {
                     $.each(data, function (i, v) {
                         var row = "<tr><td>" + v.employeeName;
@@ -64,11 +64,10 @@
         }
         $("#btnSearch").click(function () {
             var search = $("#Search").val();
-            $("#posList > tbody > tr").remove();
             if (search) {
-               
+                GetEmployee(search);
             } else {
-                window.location.reload();
+                GetEmployee("");
             }
         });
         function Delete(id) {
