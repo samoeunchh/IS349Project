@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using IS349Pro.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IS349Pro.Controllers;
 
@@ -57,9 +58,41 @@ public class EmployeeController : Controller
     // GET: Employee/Create
     public ActionResult Create()
     {
+       
+        ViewData["Positions"] = new SelectList(GetPositions(), "PositionId", "PositionName");
+        ViewData["Departments"] = new SelectList(GetDepartments(), "DepartmentId", "DepartmentName");
         return View();
     }
-
+    private List<Position> GetPositions()
+    {
+        var position = _context.ReadData("SELECT PositionId,PositionName FROM Position");
+        var positions = new List<Position>();
+        while (position.Read())
+        {
+            positions.Add(new Position
+            {
+                PositionId = int.Parse(position[0].ToString()),
+                PositionName = position[1].ToString()
+            });
+        }
+        position.Close();
+        return positions;
+    }
+    private List<Department> GetDepartments()
+    {
+        var department = _context.ReadData("SELECT DepartmentId,DepartmentName FROM Department");
+        var departments = new List<Department>();
+        while (department.Read())
+        {
+            departments.Add(new Department
+            {
+                DepartmentId = int.Parse(department[0].ToString()),
+                DepartmentName = department[1].ToString()
+            });
+        }
+        department.Close();
+        return departments;
+    }
     // POST: Employee/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
