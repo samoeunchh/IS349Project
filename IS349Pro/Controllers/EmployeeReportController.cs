@@ -23,5 +23,25 @@ namespace IS349Pro.Controllers
             ViewData["Departments"] = new SelectList(_helper.GetDepartments(), "DepartmentId", "DepartmentName");
             return View();
         }
+        public JsonResult GetEmployee(string q,int? departmentId,int? positionId)
+        {
+            var empList = new List<EmpolyeeDTO>();
+            var result = _context.GetEmployee(q,departmentId,positionId);
+            while (result.Read())
+            {
+                empList.Add(new EmpolyeeDTO
+                {
+                    EmployeeId = int.Parse(result["EmployeeId"].ToString()),
+                    EmployeeName = result["EmployeeName"].ToString(),
+                    Gender = result["Gender"].ToString(),
+                    Address = result["Address"].ToString(),
+                    Salary = double.Parse(result["Salary"].ToString()),
+                    PositionName = result["PositionName"].ToString(),
+                    DepartmentName = result["DepartmentName"].ToString()
+                });
+            }
+            result.Close();
+            return Json(empList);
+        }
     }
 }

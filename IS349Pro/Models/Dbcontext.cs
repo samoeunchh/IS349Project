@@ -40,6 +40,32 @@ public class Dbcontext
             return cmd.ExecuteReader();
         }
     }
+    public SqlDataReader GetEmployee(string search,int? departmentId=null,int? positionId=null)
+    {
+
+        string sql = "SELECT e.EmployeeId,e.EmployeeName,e.Gender,e.Address,e.Salary," +
+            "\np.PositionName,d.DepartmentName" +
+            "\nFROM Employee e INNER JOIN [Position] p ON e.PositionId = p.PositionId" +
+            "\nINNER JOIN Department d ON e.DepartmentId=d.DepartmentId WHERE LOWER(e.EmployeeName) LIKE N'%'+ @empName +'%' OR @empName is Null";
+        if(departmentId is not null) {
+            sql += " AND e.DepartmentId=@departId";
+        }
+        if (positionId is not null)
+        {
+            sql += " AND e.PositionId=@posId";
+        }
+        using (SqlCommand cmd = new SqlCommand(sql, _connection))
+        {
+            cmd.Parameters.AddWithValue("@empName", string.IsNullOrEmpty(search) ? DBNull.Value : search.ToLower());
+            cmd.Parameters.AddWithValue("@departId", departmentId == null ? DBNull.Value : departmentId);
+            cmd.Parameters.AddWithValue("@posId", positionId == null ? DBNull.Value : positionId);
+            if (_connection.State == ConnectionState.Closed)
+            {
+                _connection.Open();
+            }
+            return cmd.ExecuteReader();
+        }
+    }
     public int IsExist(string sql)
 	{
 		using(SqlCommand cmd=new SqlCommand(sql, _connection))
