@@ -24,7 +24,23 @@ public class Dbcontext
             return cmd.ExecuteReader();
 		}
 	}
-	public int IsExist(string sql)
+    public SqlDataReader GetEmployee(string search)
+    {
+        string sql = "SELECT e.EmployeeId,e.EmployeeName,e.Gender,e.Address,e.Salary," +
+            "\np.PositionName,d.DepartmentName" +
+            "\nFROM Employee e INNER JOIN [Position] p ON e.PositionId = p.PositionId" +
+            "\nINNER JOIN Department d ON e.DepartmentId=d.DepartmentId WHERE LOWER(e.EmployeeName) LIKE N'%'+ @empName +'%' OR @empName is Null";
+        using (SqlCommand cmd = new SqlCommand(sql, _connection))
+        {
+			cmd.Parameters.AddWithValue("@empName", string.IsNullOrEmpty(search) ? DBNull.Value : search.ToLower());
+            if (_connection.State == ConnectionState.Closed)
+            {
+                _connection.Open();
+            }
+            return cmd.ExecuteReader();
+        }
+    }
+    public int IsExist(string sql)
 	{
 		using(SqlCommand cmd=new SqlCommand(sql, _connection))
 		{

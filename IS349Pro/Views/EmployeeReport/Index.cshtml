@@ -3,18 +3,30 @@
 }
 
 <div class="container">
-    <div class="row">
-        <div class="col-4">
-            <a href="/Employee/Create" class="btn btn-primary">
-            Add Employee</a>
-        </div>
-        <div class="col-6">
-            <input class="form-control" id="Search" name="Search" />
-        </div>
-        <div class="col-2">
-            <button class="btn btn-primary" id="btnSearch">Search</button>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-3">
+                    <select asp-items="ViewBag.Departments" class="form-control" id="departmentId">
+                        <option>Select ...</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <select asp-items="ViewBag.Positions" class="form-control" id="positionId">
+                        <option>Select ...</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <input class="form-control" id="search" />
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary">Search</button>
+                    <button class="btn btn-primary">Print</button>
+                </div>
+            </div>
         </div>
     </div>
+</div>
     <br/>
    <div class="row">
        <div class="col-12">
@@ -27,7 +39,6 @@
                        <th>Salary</th>
                        <th>Position</th>
                        <th>Department</th>
-                       <th>Action</th>
                    </tr>
                </thead>
                <tbody>

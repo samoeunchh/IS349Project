@@ -12,9 +12,11 @@ namespace IS349Pro.Controllers;
 public class EmployeeController : Controller
 {
     private readonly Dbcontext _context;
+    private readonly HelperClass _helper;
     public EmployeeController()
     {
         _context = new Dbcontext();
+        _helper = new HelperClass();
     }
     // GET: Employee
     public ActionResult Index()
@@ -23,16 +25,8 @@ public class EmployeeController : Controller
     }
     public JsonResult GetEmployee(string q)
     {
-        string sql = "SELECT e.EmployeeId,e.EmployeeName,e.Gender,e.Address,e.Salary," +
-            "\np.PositionName,d.DepartmentName" +
-            "\nFROM Employee e INNER JOIN [Position] p ON e.PositionId = p.PositionId" +
-            "\nINNER JOIN Department d ON e.DepartmentId=d.DepartmentId";
-        if (!string.IsNullOrEmpty(q))
-        {
-            sql += " WHERE e.EmployeeName Like N'%" + q + "%' OR p.PositionName LIKE N'%"+ q +"%'";
-        }
         var empList = new List<EmpolyeeDTO>();
-        var result = _context.ReadData(sql);
+        var result = _context.GetEmployee(q);
         while (result.Read())
         {
             empList.Add(new EmpolyeeDTO
@@ -59,78 +53,70 @@ public class EmployeeController : Controller
     public ActionResult Create()
     {
        
-        ViewData["Positions"] = new SelectList(GetPositions(), "PositionId", "PositionName");
-        ViewData["Departments"] = new SelectList(GetDepartments(), "DepartmentId", "DepartmentName");
+        ViewData["Positions"] = new SelectList(_helper.GetPositions(), "PositionId", "PositionName");
+        ViewData["Departments"] = new SelectList(_helper.GetDepartments(), "DepartmentId", "DepartmentName");
         return View();
     }
-    private List<Position> GetPositions()
-    {
-        var position = _context.ReadData("SELECT PositionId,PositionName FROM Position");
-        var positions = new List<Position>();
-        while (position.Read())
-        {
-            positions.Add(new Position
-            {
-                PositionId = int.Parse(position[0].ToString()),
-                PositionName = position[1].ToString()
-            });
-        }
-        position.Close();
-        return positions;
-    }
-    private List<Department> GetDepartments()
-    {
-        var department = _context.ReadData("SELECT DepartmentId,DepartmentName FROM Department");
-        var departments = new List<Department>();
-        while (department.Read())
-        {
-            departments.Add(new Department
-            {
-                DepartmentId = int.Parse(department[0].ToString()),
-                DepartmentName = department[1].ToString()
-            });
-        }
-        department.Close();
-        return departments;
-    }
+   
+   
     // POST: Employee/Create
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public ActionResult Create(IFormCollection collection)
+    //[ValidateAntiForgeryToken]
+    public ActionResult Create(Employee employee)
     {
-        try
+        if(ModelState.IsValid)
         {
-            // TODO: Add insert logic here
-
-            return RedirectToAction(nameof(Index));
+            var sql = "INSERT INTO Employee(EmployeeName,Gender,DepartmentId,PositionId,Salary,Address) VALUES('"+
+                employee.EmployeeName +"','"+ employee.Gender +"',"+ employee.DepartmentId +","+
+                employee.PositionId +","+ employee.Salary +",'"+ employee.Address +"')";
+            if (_context.ExecuteQuery(sql))
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
-        catch
-        {
-            return View();
-        }
+        ViewData["Positions"] = new SelectList(_helper.GetPositions(), "PositionId", "PositionName",employee.PositionId);
+        ViewData["Departments"] = new SelectList(_helper.GetDepartments(), "DepartmentId", "DepartmentName",employee.DepartmentId);
+        return View();
     }
 
     // GET: Employee/Edit/5
     public ActionResult Edit(int id)
     {
-        return View();
+        ViewData["Positions"] = new SelectList(_helper.GetPositions(), "PositionId", "PositionName");
+        ViewData["Departments"] = new SelectList(_helper.GetDepartments(), "DepartmentId", "DepartmentName");
+        var sql = "SELECT * FROM Employee WHERE EmployeeId=" + id;
+        var result = _context.ReadData(sql);
+        var employee = new Employee();
+        if(result.Read())
+        {
+            employee.DepartmentId = int.Parse(result["DepartmentId"].ToString());
+            employee.PositionId = int.Parse(result["PositionId"].ToString());
+            employee.EmployeeName = result["EmployeeName"].ToString();
+            employee.Gender = result["Gender"].ToString();
+            employee.Salary = double.Parse(result["Salary"].ToString());
+            employee.Address = result["Address"].ToString();
+            employee.EmployeeId = int.Parse(result["EmployeeId"].ToString());
+        }
+        return View(employee);
     }
 
     // POST: Employee/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Edit(int id, IFormCollection collection)
+    public ActionResult Edit(int id, Employee employee)
     {
-        try
+        if (ModelState.IsValid)
         {
-            // TODO: Add update logic here
-
-            return RedirectToAction(nameof(Index));
+            var sql = "UPDATE Employee SET EmployeeName='"+ employee.EmployeeName +"',Gender='"+
+                employee.Gender+"',DepartmentId="+ employee.DepartmentId +",PositionId="+ employee.PositionId +",Salary="+ employee.Salary+",Address='"+ employee.Address+"' WHERE EmployeeId="+ id;
+            if (_context.ExecuteQuery(sql))
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
-        catch
-        {
-            return View();
-        }
+        ViewData["Positions"] = new SelectList(_helper.GetPositions(), "PositionId", "PositionName", employee.PositionId);
+        ViewData["Departments"] = new SelectList(_helper.GetDepartments(), "DepartmentId", "DepartmentName", employee.DepartmentId);
+        return View();
     }
 
     // GET: Employee/Delete/5
